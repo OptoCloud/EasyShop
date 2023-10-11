@@ -7,7 +7,7 @@ const sql = postgres({
     database: env.AZURE_PGSQL_DATABASE,
     username: env.AZURE_PGSQL_USER,
     password: env.AZURE_PGSQL_PASSWORD,
-    ssl: env.AZURE_PGSQL_SSL === 'true' ? 'require' : false
+    ssl: 'require'
 });
 
 export default sql;
