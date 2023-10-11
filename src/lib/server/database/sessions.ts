@@ -1,7 +1,7 @@
 import sql from './instance'
 import type { PostgresError } from 'postgres';
 import type { Failable } from '$lib/server/Failable';
-import { sha512 } from 'hash.js'
+import hash from 'hash.js'
 import { cryptoRandomStringAsync } from 'crypto-random-string'
 
 export interface DbSession {
@@ -18,7 +18,7 @@ export interface DbSession {
  * @returns A failable containing the session if successful, or an error message if not
  */
 export async function getSessionByToken(token: string): Promise<Failable<DbSession, string, PostgresError>> {
-    const tokenHash = sha512().update(token).digest('hex');
+    const tokenHash = hash.sha512().update(token).digest('hex');
 
     try {
         const sessions = await sql<DbSession[]>`
@@ -61,7 +61,7 @@ export async function getSessionByToken(token: string): Promise<Failable<DbSessi
  */
 export async function createSession(user_id: number): Promise<Failable<{ id: number, token: string }, string, PostgresError>> {
     const token = await cryptoRandomStringAsync({ length: 64, type: 'url-safe' });
-    const tokenHash = sha512().update(token).digest('hex');
+    const tokenHash = hash.sha512().update(token).digest('hex');
 
     try {
         const sessions = await sql<DbSession[]>`

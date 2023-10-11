@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs'
 import sql from './instance'
 import type { PostgresError } from 'postgres';
 import type { Failable } from '$lib/server/Failable';
-import { sha512 } from 'hash.js';
+import hash from 'hash.js';
 
 export interface DbUser {
   id: number;
@@ -142,7 +142,7 @@ export async function getUserByLogin(usernameOrEmail: string, password: string):
  * @returns A failable containing the user if successful, or an error message if not
  */
 export async function getUserBySessionToken(sessionToken: string): Promise<Failable<DbUser, string, PostgresError>> {
-  const tokenHash = sha512().update(sessionToken).digest('hex');
+  const tokenHash = hash.sha512().update(sessionToken).digest('hex');
 
   try {
     const users = await sql<DbUser[]>`
